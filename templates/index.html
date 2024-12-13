@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Resume Screening Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header-container">
+        <a href="https://www.ustp.edu.ph/cdeo/citc/ds-dept/" target="_blank">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+        </a>
+        <h1 class="tool-title">HR Resume Screening Assistance Tool</h1>
+    </div>
+
+    <div class="header-image">
+        <a href="https://www.ustp.edu.ph/cdeo/citc/ds-dept/" target="_blank">
+            <img src="{{ url_for('static', filename='images/header.png') }}" alt="Header Image" class="header-img">
+        </a>
+    </div>
+
+    <div class="container">
+        <form method="POST" enctype="multipart/form-data" id="resumeForm">
+            <div class="form-group">
+                <label for="job_description">Job Description</label>
+                <textarea name="job_description" id="job_description" rows="5" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="resumes">Upload Resumes (PDF)</label>
+                <input type="file" name="resumes" id="resumes" multiple accept=".pdf" required>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+        
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+        </div>
+        
+        {% if results %}
+            <div class="results">
+                <h2>Results</h2>
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>Resume Name</th>
+                            <th>Score</th>
+                            <th>Summary</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resume, score, summary in results %}
+                            <tr {% if resume == top_match[0] %} class="top-match" {% endif %}>
+                                <td>
+                                    <a href="{{ url_for('static', filename='resumes/' + resume) }}" target="_blank">
+                                        {{ resume }}
+                                    </a>
+                                </td>
+                                <td>{{ "{:.2f}".format(score) }}</td>
+                                <td>{{ summary }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <p>All Rights Reserved</p>
+        <p>© USTP Department of Data Science 2024</p>
+    </footer>
+
+    <script>
+        document.getElementById('resumeForm').addEventListener('submit', function() {
+            document.getElementById('loadingSpinner').style.display = 'flex';
+        });
+    </script>
+</body>
+</html>
